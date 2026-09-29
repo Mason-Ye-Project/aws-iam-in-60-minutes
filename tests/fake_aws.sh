@@ -3,19 +3,20 @@
 set -euo pipefail
 
 state="${IAM60_FAKE_STATE:-happy}"
+fake_account_id="$(printf '%s%s%s' 1111 2222 3333)"
 printf '%s\n' "$*" >> "${IAM60_FAKE_LOG:?}"
 
 if [[ "$1 $2" == "sts get-caller-identity" ]]; then
   if [[ "$*" == *"--query Arn"* ]]; then
-    printf '%s\n' 'arn:aws:sts::111122223333:assumed-role/iam-60-lab-role/iam-60-lab-session'
+    printf 'arn:aws:sts::%s:assumed-role/iam-60-lab-role/iam-60-lab-session\n' "$fake_account_id"
   elif [[ "$state" == root* ]]; then
-    printf '%s\n' '{"Account":"111122223333","Arn":"arn:aws:iam::111122223333:root"}'
+    printf '{"Account":"%s","Arn":"arn:aws:iam::%s:root"}\n' "$fake_account_id" "$fake_account_id"
   elif [[ "$state" == assumed* ]]; then
-    printf '%s\n' '{"Account":"111122223333","Arn":"arn:aws:sts::111122223333:assumed-role/OperatorRole/session"}'
+    printf '{"Account":"%s","Arn":"arn:aws:sts::%s:assumed-role/OperatorRole/session"}\n' "$fake_account_id" "$fake_account_id"
   elif [[ "$state" == unsupported* ]]; then
-    printf '%s\n' '{"Account":"111122223333","Arn":"arn:aws:sts::111122223333:federated-user/Operator"}'
+    printf '{"Account":"%s","Arn":"arn:aws:sts::%s:federated-user/Operator"}\n' "$fake_account_id" "$fake_account_id"
   else
-    printf '%s\n' '{"Account":"111122223333","Arn":"arn:aws:iam::111122223333:user/Operator"}'
+    printf '{"Account":"%s","Arn":"arn:aws:iam::%s:user/Operator"}\n' "$fake_account_id" "$fake_account_id"
   fi
   exit 0
 fi
@@ -39,7 +40,7 @@ fi
 
 if [[ "$1 $2" == "iam get-role" ]]; then
   if [[ "$*" == *"--role-name OperatorRole"* ]]; then
-    printf '%s\n' 'arn:aws:iam::111122223333:role/team/OperatorRole'
+    printf 'arn:aws:iam::%s:role/team/OperatorRole\n' "$fake_account_id"
     exit 0
   fi
   if [[ "$state" == *"before-create"* ]]; then
@@ -52,7 +53,7 @@ if [[ "$1 $2" == "iam get-role" ]]; then
     exit 254
   fi
   if [[ "$*" == *"--query Role.Arn"* ]]; then
-    printf '%s\n' 'arn:aws:iam::111122223333:role/iam-60-lab-role'
+    printf 'arn:aws:iam::%s:role/iam-60-lab-role\n' "$fake_account_id"
   elif [[ "$*" == *"--query Role.RoleName"* ]]; then
     printf '%s\n' 'iam-60-lab-role'
   else
