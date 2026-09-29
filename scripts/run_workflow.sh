@@ -79,6 +79,7 @@ attached_count="$("$IAM60_AWS_CLI" iam list-attached-role-policies \
 )
 
 unset role_arn owner_value inline_names attached_count
+printf '%s\n' 'Temporary identity confirmed: expected assumed-role shape for iam-60-lab-role.'
 printf '%s\n' 'Temporary session confirmed: one exact-role read was allowed.'
 printf '%s\n' 'A different read-only IAM request was denied by omission.'
 printf '%s\n' 'Temporary credentials were held only inside this process and were not printed.'

@@ -18,6 +18,11 @@ fi
 unset existing_output
 
 principal_arn="$(iam60_resolve_principal_arn)"
+case "$principal_arn" in
+  arn:*:iam::*:user/*) principal_kind="IAM user" ;;
+  arn:*:iam::*:role/*) principal_kind="assumed IAM role" ;;
+  *) iam60_die "The resolved principal type is not supported." ;;
+esac
 read -r partition account_id < <(iam60_account_and_partition)
 role_arn="arn:${partition}:iam::${account_id}:role/${IAM60_ROLE_NAME}"
 
@@ -59,6 +64,7 @@ blocking_findings="$(printf '%s' "$validation_json" | jq '[
     .findingType == "ERROR" or .findingType == "SECURITY_WARNING"
   )
 ] | length')"
+total_findings="$(printf '%s' "$validation_json" | jq '[.findings[]?] | length')"
 [[ "$blocking_findings" == "0" ]] || \
   iam60_die "Policy validation returned a blocking finding; no role was created."
 
@@ -78,4 +84,6 @@ iam60_retry_capture "Attaching the lab policy" \
   >/dev/null
 
 printf '%s\n' 'Created the tagged lab role with one validated inline policy.'
+printf 'Caller confirmed: supported non-root %s.\n' "$principal_kind"
+printf 'Policy validation: %s total finding(s), 0 blocking.\n' "$total_findings"
 printf '%s\n' 'No credentials or account-specific identifiers were printed.'
