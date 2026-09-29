@@ -1,0 +1,45 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "IdentifyTheCurrentCaller",
+      "Effect": "Allow",
+      "Action": "sts:GetCallerIdentity",
+      "Resource": "*"
+    },
+    {
+      "Sid": "CreateInspectAndDeleteOnlyTheLabRole",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateRole",
+        "iam:GetRole",
+        "iam:TagRole",
+        "iam:ListRoleTags",
+        "iam:PutRolePolicy",
+        "iam:ListRolePolicies",
+        "iam:ListAttachedRolePolicies",
+        "iam:DeleteRolePolicy",
+        "iam:DeleteRole"
+      ],
+      "Resource": "arn:aws:iam::<ACCOUNT_ID>:role/iam-60-lab-role"
+    },
+    {
+      "Sid": "ResolveTheCurrentCallerRoleWhenNeeded",
+      "Effect": "Allow",
+      "Action": "iam:GetRole",
+      "Resource": "arn:aws:iam::<ACCOUNT_ID>:role/<CURRENT_CALLER_ROLE_PATH_AND_NAME>"
+    },
+    {
+      "Sid": "ValidatePoliciesWithoutCreatingAnAnalyzer",
+      "Effect": "Allow",
+      "Action": "access-analyzer:ValidatePolicy",
+      "Resource": "*"
+    },
+    {
+      "Sid": "AssumeOnlyTheLabRole",
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": "arn:aws:iam::<ACCOUNT_ID>:role/iam-60-lab-role"
+    }
+  ]
+}

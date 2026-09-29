@@ -1,0 +1,14 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "TrustOnePreparedPrincipal",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "<EXACT_IAM_USER_OR_ROLE_ARN>"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+
