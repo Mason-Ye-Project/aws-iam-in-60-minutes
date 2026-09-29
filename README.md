@@ -38,6 +38,8 @@ Run the local tests without contacting AWS:
 ./tests/test_shell_safety.sh
 ```
 
+The publisher's bounded reference run may set `IAM60_AWS_CLI` to `scripts/aws_call_recorder.sh`. That optional wrapper records only each AWS CLI service and operation in a private local log so the run's call count can be reported; it never records arguments, identifiers, output, or credentials. Ordinary readers can ignore it.
+
 ## Safety boundaries
 
 - the scripts refuse an AWS account root caller and unsupported caller types;
